@@ -30,3 +30,19 @@ function reevoomark_libraries_info() {
     ),
   );
 }
+
+/**
+ * Implements of hook_menu().
+ */
+function reevoomark_menu() {
+  $items['admin/config/system/reevoomark'] = array(
+    'title' => 'ReevooMark',
+    'description' => 'Change the setting configuration when using ReevooMark.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('reevoomark_admin_settings'),
+    'access arguments' => array('administer reevoomark settings'),
+    'file' => 'reevoomark.admin.inc',
+  );
+
+  return $items;
+}

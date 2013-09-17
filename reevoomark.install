@@ -38,3 +38,12 @@ function reevoomark_requirements($phase) {
 
   return $requirements;
 }
+
+/**
+ * Implements hook_uninstall().
+ */
+function reevoomark_uninstall() {
+  // Delete created variables.
+  variable_del('reevoomark_retailer');
+  variable_del('reevoomark_url');
+}
