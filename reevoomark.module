@@ -46,3 +46,84 @@ function reevoomark_menu() {
 
   return $items;
 }
+
+/**
+ * Implements of hook_block_info().
+ */
+function reevoomark_block_info() {
+  $blocks['first_two_reviews'] = array(
+    'info' => t('ReevooMark first two reviews'),
+    'cache' => DRUPAL_CACHE_PER_PAGE,
+  );
+  $blocks['embeddable_reviews'] = array(
+    'info' => t('ReevooMark embeddable reviews'),
+    'cache' => DRUPAL_CACHE_PER_PAGE,
+  );
+  $blocks['embeddable_reviews_slim'] = array(
+    'info' => t('ReevooMark slim embeddable reviews'),
+    'cache' => DRUPAL_CACHE_PER_PAGE,
+  );
+  $blocks['offers'] = array(
+    'info' => t('ReevooMark offers'),
+    'cache' => DRUPAL_CACHE_PER_PAGE,
+  );
+  return $blocks;
+}
+
+/**
+ * Implements of hook_block_view().
+ */
+function reevoomark_block_view($delta = '') {
+  $block = array();
+
+  switch ($delta) {
+    case 'first_two_reviews':
+    case 'embeddable_reviews':
+    case 'embeddable_reviews_slim':
+    case 'offers':
+
+      $sku = reevoomark_get_sku();
+      if (empty($sku)) {
+        // No sku = no review
+        return $block;
+      }
+
+      if ($mark = reevoomark_get_service(variable_get('reevoomark_url_' . $delta), $sku)) {
+        $block['content'] = $mark->body();
+      }
+      break;
+  }
+
+  return $block;
+}
+
+/**
+ * Get the sku of the product whose reviews are wanted.
+ */
+function reevoomark_get_sku() {
+  // VERY TEMPORARY DATA FOR INITIAL PROOF OF CONCEPT.
+  return '5427';
+}
+
+/**
+ * Get the ReevooMark object.
+ *
+ * @return ReevooMark
+ */
+function reevoomark_get_service($url, $sku) {
+  $cache = '/tmp'; //@todo make cache configurable and not necessarily a path. memcache, db etc.
+
+  if (($library = libraries_load('reevoomark-php-api')) && !empty($library['loaded'])) {
+    $mark = new ReevooMark(
+      '/tmp',
+      $url,
+      variable_get('reevoomark_retailer'),
+      $sku
+    );
+
+    return $mark;
+  }
+
+  return FALSE;
+}
+

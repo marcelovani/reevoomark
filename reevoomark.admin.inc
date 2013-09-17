@@ -23,12 +23,29 @@ function reevoomark_admin_settings($form, &$form_state) {
     '#default_value' => variable_get('reevoomark_retailer', ''),
     '#required' => TRUE,
   );
-  $form['reevoomark_url'] = array(
+  $form['reevoomark_url_first_two_reviews'] = array(
     '#type' => 'textfield',
-    '#title' => t('Service Url'),
-    '#description' => t('The endpoint for the ReevooMark service.'),
-    '#default_value' => variable_get('reevoomark_url', 'http://mark.reevoo.com/reevoomark/first_two_reviews.html'),
-    '#required' => TRUE,
+    '#title' => t('First two reviews'),
+    '#description' => t('The endpoint for the ReevooMark first two reviews service.'),
+    '#default_value' => variable_get('reevoomark_url_first_two_reviews', 'http://mark.reevoo.com/reevoomark/first_two_reviews.html'),
+  );
+  $form['reevoomark_url_embeddable_reviews'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Embeddable reviews'),
+    '#description' => t('The endpoint for the ReevooMark embeddable reviews service.'),
+    '#default_value' => variable_get('reevoomark_url_embeddable_reviews', 'http://mark.reevoo.com/reevoomark/embeddable_reviews'),
+  );
+  $form['reevoomark_url_embeddable_reviews_slim'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Slim embeddable reviews'),
+    '#description' => t('The endpoint for the ReevooMark slim embeddable reviews service.'),
+    '#default_value' => variable_get('reevoomark_url_embeddable_reviews_slim', 'http://mark.reevoo.com/reevoomark/embeddable_reviews/slim.html'),
+  );
+  $form['reevoomark_url_offers'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Offers widget'),
+    '#description' => t('The endpoint for the ReevooMark offers widget service.'),
+    '#default_value' => variable_get('reevoomark_url_offers', 'http://mark.reevoo.com/widgets/offers '),
   );
 
   return system_settings_form($form);

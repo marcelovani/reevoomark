@@ -45,5 +45,8 @@ function reevoomark_requirements($phase) {
 function reevoomark_uninstall() {
   // Delete created variables.
   variable_del('reevoomark_retailer');
-  variable_del('reevoomark_url');
+  variable_del('reevoomark_url_first_two_reviews');
+  variable_del('reevoomark_url_embeddable_reviews');
+  variable_del('reevoomark_url_embeddable_reviews_slim');
+  variable_del('reevoomark_url_offers');
 }
