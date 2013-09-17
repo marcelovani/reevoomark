@@ -1,0 +1,32 @@
+<?php
+/**
+ * @file
+ * General functions and hook implementations.
+ *
+ * @see https://github.com/reevoo/reevoomark-php-api
+ *
+ */
+
+/**
+ * Implements hook_libraries_info()
+ */
+function reevoomark_libraries_info() {
+  return array(
+    'reevoomark-php-api' => array(
+      'title' => 'PHP API for embedded reevoomarks',
+      'vendor url' => 'http://www.reevoo.com',
+      'download url' => 'https://github.com/reevoo/reevoomark-php-api',
+      'path' => 'lib',
+      'version arguments' => array(
+        'file' => 'lib/reevoo_mark.php',
+        'pattern' => '~"ReevooMark PHP Widget/(.*?)"~',
+        'lines' => 200,
+      ),
+      'files' => array(
+        'php' => array(
+          'reevoo_mark.php',
+        ),
+      ),
+    ),
+  );
+}

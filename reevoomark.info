@@ -1,0 +1,4 @@
+name = ReevooMark
+description = A module for ReevooMark customers who want to quickly and easily integrate Reevoo content in to their sites server-side.
+dependencies[] = libraries (2.x)
+core = 7.x

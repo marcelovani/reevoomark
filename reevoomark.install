@@ -1,0 +1,40 @@
+<?php
+/**
+ * @file
+ * Installation and uninstallation functions.
+ */
+
+/**
+ * Implements hook_requirements()
+ */
+function reevoomark_requirements($phase) {
+  $requirements = array();
+
+  if ($phase == 'runtime') {
+    $t = get_t();
+    $library = libraries_detect('reevoomark-php-api');
+
+    if (empty($library['installed'])) {
+      $requirements['reevoomark-php-api'] = array(
+        'severity' => REQUIREMENT_ERROR,
+        'title' => $t('ReevooMark'),
+        'value' => $t('Failed to load the reevoomark-php-api library'),
+        'description' => $t('Please make sure the !reevoomark library is installed in the %path directory. Use the drush make file for easy installation.',
+          array(
+            '!reevoomark' => l($t('reevoomark-php-api'),
+            $library['download url']),
+            '%path' => 'sites/all/libraries')
+        ),
+      );
+    }
+    else {
+      $requirements['reevoomark-php-api'] = array(
+        'title' => $t('ReevooMark'),
+        'severity' => REQUIREMENT_OK,
+        'value' => $library['version'],
+      );
+    }
+  }
+
+  return $requirements;
+}
