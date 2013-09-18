@@ -82,7 +82,7 @@ function reevoomark_block_view($delta = '') {
     case 'embeddable_reviews_slim':
     case 'offers':
 
-      $sku = reevoomark_get_sku();
+      $sku = reevoomark_sku();
       if (empty($sku)) {
         // No sku = no review
         return $block;
@@ -99,10 +99,21 @@ function reevoomark_block_view($delta = '') {
 
 /**
  * Get the sku of the product whose reviews are wanted.
+ *
+ * Defaults to nid of current page.
+ *
+ * @see hook_reevoomark_sku_alter($sku)
  */
-function reevoomark_get_sku() {
-  // VERY TEMPORARY DATA FOR INITIAL PROOF OF CONCEPT.
-  return '5427';
+function reevoomark_sku() {
+  $sku = '';
+
+  $menu_object = menu_get_object();
+  if (!empty($menu_object->nid)) {
+    $sku = $menu_object->nid;
+  }
+  drupal_alter('reevoomark_sku', $sku);
+
+  return $sku;
 }
 
 /**
