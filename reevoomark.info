@@ -5,3 +5,5 @@ configure = admin/config/system/reevoomark
 core = 7.x
 
 dependencies[] = libraries (2.x)
+
+files[] = includes/ReevooMarkService.inc

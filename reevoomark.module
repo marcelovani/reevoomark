@@ -67,6 +67,15 @@ function reevoomark_block_info() {
     'info' => t('ReevooMark offers'),
     'cache' => DRUPAL_CACHE_PER_PAGE,
   );
+  $blocks['overall_score'] = array(
+    'info' => t('ReevooMark overall score'),
+    'cache' => DRUPAL_CACHE_PER_PAGE,
+  );
+  $blocks['buy_now'] = array(
+    'info' => t('ReevooMark buy now price'),
+    'cache' => DRUPAL_CACHE_PER_PAGE,
+  );
+
   return $blocks;
 }
 
@@ -76,18 +85,29 @@ function reevoomark_block_info() {
 function reevoomark_block_view($delta = '') {
   $block = array();
 
+  $sku = reevoomark_sku();
+  if (empty($sku)) {
+    // No sku = no review
+    return $block;
+  }
+
   switch ($delta) {
+    case 'overall_score':
+      if ($mark = reevoomark_get_service(variable_get('reevoomark_url_first_two_reviews'), $sku)) {
+        //@todo renderable array & tpl for score
+        $block['content'] =  '<div>' . $mark->getOverallScore() . '</div>';
+      }
+      break;
+    case 'buy_now':
+      if ($mark = reevoomark_get_service(variable_get('reevoomark_url_offers'), $sku)) {
+        //@todo renderable array & tpl
+        $block['content'] =  '<div>' . $mark->getBestPrice() . ' ' . $mark->getBestPriceLink() . '</div>';
+      }
+      break;
     case 'first_two_reviews':
     case 'embeddable_reviews':
     case 'embeddable_reviews_slim':
     case 'offers':
-
-      $sku = reevoomark_sku();
-      if (empty($sku)) {
-        // No sku = no review
-        return $block;
-      }
-
       if ($mark = reevoomark_get_service(variable_get('reevoomark_url_' . $delta), $sku)) {
         $block['content'] = $mark->body();
       }
@@ -125,10 +145,10 @@ function reevoomark_get_service($url, $sku) {
   $cache = '/tmp'; //@todo make cache configurable and not necessarily a path. memcache, db etc.
 
   if (($library = libraries_load('reevoomark-php-api')) && !empty($library['loaded'])) {
-    $mark = new ReevooMark(
+    $mark = new ReevooMarkService(
       '/tmp',
-      $url,
-      variable_get('reevoomark_retailer'),
+      trim($url),
+      trim(variable_get('reevoomark_retailer')),
       $sku
     );
 

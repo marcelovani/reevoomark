@@ -45,7 +45,7 @@ function reevoomark_admin_settings($form, &$form_state) {
     '#type' => 'textfield',
     '#title' => t('Offers widget'),
     '#description' => t('The endpoint for the ReevooMark offers widget service.'),
-    '#default_value' => variable_get('reevoomark_url_offers', 'http://mark.reevoo.com/widgets/offers '),
+    '#default_value' => variable_get('reevoomark_url_offers', 'http://mark.reevoo.com/widgets/offers'),
   );
 
   return system_settings_form($form);
