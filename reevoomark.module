@@ -54,7 +54,7 @@ function reevoomark_theme() {
   return array(
     'reevoomark_body' => array(
       'variables' => array(
-        'delta' => NULL,
+        'class' => NULL,
         'body' => NULL,
       ),
     ),
@@ -123,6 +123,7 @@ function reevoomark_block_view($delta = '') {
           $block['content'] = array(
             '#score' => $score,
             '#theme' => 'reevoomark_overall_score',
+            '#attached' => reevoomark_renderable_attached(),
           );
         }
 
@@ -137,6 +138,7 @@ function reevoomark_block_view($delta = '') {
             '#price' => $price,
             '#url' => $mark->getBestPriceLink(),
             '#theme' => 'reevoomark_best_price',
+            '#attached' => reevoomark_renderable_attached(),
           );
         }
 
@@ -151,8 +153,9 @@ function reevoomark_block_view($delta = '') {
         if (!empty($body)) {
           $block['content'] = array(
             '#body' => $body,
-            '#delta' => $delta,
+            '#class' => $delta,
             '#theme' => 'reevoomark_body',
+            '#attached' => reevoomark_renderable_attached(),
           );
         }
       }
@@ -160,6 +163,20 @@ function reevoomark_block_view($delta = '') {
   }
 
   return $block;
+}
+
+/**
+ * The '#attached' part of the renderable array for including the required common js & css.
+ */
+function reevoomark_renderable_attached() {
+  return array(
+    'css' => array(
+      'http://mark.reevoo.com/stylesheets/reevoomark/embedded_reviews.css',
+    ),
+    'js' => array(
+      'http://mark.reevoo.com/reevoomark/' . variable_get('reevoomark_retailer') . '.js',
+    ),
+  );
 }
 
 /**
@@ -203,15 +220,44 @@ function reevoomark_get_service($url, $sku) {
   return FALSE;
 }
 
+/**
+ * Returns HTML from Reevoo wrapped in a div.
+ *
+ * @param $variables
+ *   An associative array containing:
+ *   - class: A class name that will be prefixed by 'reevoomark_'.
+ *   - body: The html returned by Reevoo.
+ *
+ * @ingroup themeable
+ */
 function theme_reevoomark_body($variables) {
-  return '<div class="reevoomark_' . $variables['delta'] . '">' . $variables['body'] . '</div>';
+  return '<div class="reevoomark_' . $variables['class'] . '">' . $variables['body'] . '</div>';
 }
 
+/**
+ * Returns the best price wrapped in a div.
+ *
+ * @param $variables
+ *   An associative array containing:
+ *   - price: The best price.
+ *   - url: The url of where to by the product at that price.
+ *
+ * @ingroup themeable
+ */
 function theme_reevoomark_best_price($variables) {
   $link = l($variables['currency_symbol'] . $variables['price'], $variables['url']);
   return '<div class="reevoomark_best_price">Buy it now for: ' . $link . '</div>';
 }
 
+/**
+ * Returns the overall score wrapped in a div.
+ *
+ * @param $variables
+ *   An associative array containing:
+ *   - score: The score.
+ *
+ * @ingroup themeable
+ */
 function theme_reevoomark_overall_score($variables) {
   return '<div class="reevoomark_overall_score">
     <span class="label">Overall Score</span> <span class="score">' . $variables['score']
