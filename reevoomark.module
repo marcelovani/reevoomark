@@ -201,20 +201,34 @@ function reevoomark_sku() {
 /**
  * Get the ReevooMarkService object.
  *
- * @return ReevooMarkService
+ * @return ReevooMarkServiceInterface
  */
 function reevoomark_get_service($url, $sku) {
   $cache = '/tmp'; //@todo make cache configurable and not necessarily a path. memcache, db etc.
+  $url = trim($url);
+  $retailer = trim(variable_get('reevoomark_retailer'));
+  $sku = trim($sku);
+
+  // Allow modules to provide their own service class
+  // The class must be implement ReevooMarkServiceInterface
+  $class_info = variable_get(
+    'reevoomark_service_class',
+    array(
+      'file' => 'ReevooMarkService',
+      'module' => 'reevoomark',
+      'class' => 'ReevooMarkService',
+    )
+  );
+  $class = $class_info['class'];
 
   if (($library = libraries_load('reevoomark-php-api')) && !empty($library['loaded'])) {
-    $mark = new ReevooMarkService(
-      '/tmp',
-      trim($url),
-      trim(variable_get('reevoomark_retailer')),
-      $sku
-    );
 
-    return $mark;
+    // Load the class file if not already loaded
+    if (!class_exists($class_info['class']) && isset($class_info['file']) && isset($class_info['module'])) {
+      module_load_include('php', $class_info['module'], $class_info['file']);
+    }
+
+    return new $class($cache, $url, $retailer, $sku);
   }
 
   return FALSE;

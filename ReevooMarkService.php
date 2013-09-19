@@ -5,7 +5,7 @@
  * Add functionality to the ReevooMark library.
  */
 
-class ReevooMarkService extends ReevooMark
+class ReevooMarkService extends ReevooMark implements ReevooMarkServiceInterface
 {
 
   /**
@@ -38,6 +38,14 @@ class ReevooMarkService extends ReevooMark
   public function getBestPriceLink()
   {
       return $this->data->header("X-Reevoo-BestPriceLink");
+  }
+
+  /**
+   * The body of the Reevoo document.
+   */
+  public function getBody()
+  {
+    return $this->body();
   }
 
 }

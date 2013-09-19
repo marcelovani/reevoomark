@@ -6,4 +6,5 @@ core = 7.x
 
 dependencies[] = libraries (2.x)
 
-files[] = includes/ReevooMarkService.inc
+files[] = ReevooMarkServiceInterface.php
+files[] = ReevooMarkService.php
