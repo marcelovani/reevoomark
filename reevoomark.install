@@ -50,3 +50,13 @@ function reevoomark_uninstall() {
   variable_del('reevoomark_url_embeddable_reviews_slim');
   variable_del('reevoomark_url_offers');
 }
+
+/**
+ * Implemtation of hook_schema().
+ */
+function reevoomark_schema() {
+  $schema['cache_reevoomark'] = drupal_get_schema_unprocessed('system', 'cache');
+
+  return $schema;
+}
+

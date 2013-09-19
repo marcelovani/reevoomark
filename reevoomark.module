@@ -204,10 +204,10 @@ function reevoomark_sku() {
  * @return ReevooMarkServiceInterface
  */
 function reevoomark_get_service($url, $sku) {
-  $cache = '/tmp'; //@todo make cache configurable and not necessarily a path. memcache, db etc.
+
   $url = trim($url);
-  $retailer = trim(variable_get('reevoomark_retailer'));
   $sku = trim($sku);
+  $retailer = trim(variable_get('reevoomark_retailer'));
 
   // Allow modules to provide their own service class
   // The class must be implement ReevooMarkServiceInterface
@@ -228,7 +228,7 @@ function reevoomark_get_service($url, $sku) {
       module_load_include('php', $class_info['module'], $class_info['file']);
     }
 
-    return new $class($cache, $url, $retailer, $sku);
+    return new $class($url, $retailer, $sku);
   }
 
   return FALSE;
