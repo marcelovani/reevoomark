@@ -48,6 +48,30 @@ function reevoomark_menu() {
 }
 
 /**
+ * Implements hook_theme().
+ */
+function reevoomark_theme() {
+  return array(
+    'reevoomark_body' => array(
+      'variables' => array(
+        'delta' => NULL,
+        'body' => NULL,
+      ),
+    ),
+    'reevoomark_overall_score' => array(
+      'variables' => array('score' => NULL),
+    ),
+    'reevoomark_best_price' => array(
+      'variables' => array(
+        'currency_symbol' => NULL,
+        'price' => NULL,
+        'url' => NULL,
+      ),
+    ),
+  );
+}
+
+/**
  * Implements of hook_block_info().
  */
 function reevoomark_block_info() {
@@ -71,8 +95,8 @@ function reevoomark_block_info() {
     'info' => t('ReevooMark overall score'),
     'cache' => DRUPAL_CACHE_PER_PAGE,
   );
-  $blocks['buy_now'] = array(
-    'info' => t('ReevooMark buy now price'),
+  $blocks['best_price'] = array(
+    'info' => t('ReevooMark best price'),
     'cache' => DRUPAL_CACHE_PER_PAGE,
   );
 
@@ -94,14 +118,28 @@ function reevoomark_block_view($delta = '') {
   switch ($delta) {
     case 'overall_score':
       if ($mark = reevoomark_get_service(variable_get('reevoomark_url_first_two_reviews'), $sku)) {
-        //@todo renderable array & tpl for score
-        $block['content'] =  '<div>' . $mark->getOverallScore() . '</div>';
+
+        if ($score = $mark->getOverallScore()) {
+          $block['content'] = array(
+            '#score' => $score,
+            '#theme' => 'reevoomark_overall_score',
+          );
+        }
+
       }
       break;
-    case 'buy_now':
+    case 'best_price':
       if ($mark = reevoomark_get_service(variable_get('reevoomark_url_offers'), $sku)) {
-        //@todo renderable array & tpl
-        $block['content'] =  '<div>' . $mark->getBestPrice() . ' ' . $mark->getBestPriceLink() . '</div>';
+
+        if ($price = $mark->getBestPrice()) {
+          $block['content'] = array(
+            '#currency_symbol' => variable_get('reevoomark_currency_symbol', '£'),
+            '#price' => $price,
+            '#url' => $mark->getBestPriceLink(),
+            '#theme' => 'reevoomark_best_price',
+          );
+        }
+
       }
       break;
     case 'first_two_reviews':
@@ -109,7 +147,14 @@ function reevoomark_block_view($delta = '') {
     case 'embeddable_reviews_slim':
     case 'offers':
       if ($mark = reevoomark_get_service(variable_get('reevoomark_url_' . $delta), $sku)) {
-        $block['content'] = $mark->body();
+        $body = $mark->body();
+        if (!empty($body)) {
+          $block['content'] = array(
+            '#body' => $body,
+            '#delta' => $delta,
+            '#theme' => 'reevoomark_body',
+          );
+        }
       }
       break;
   }
@@ -137,9 +182,9 @@ function reevoomark_sku() {
 }
 
 /**
- * Get the ReevooMark object.
+ * Get the ReevooMarkService object.
  *
- * @return ReevooMark
+ * @return ReevooMarkService
  */
 function reevoomark_get_service($url, $sku) {
   $cache = '/tmp'; //@todo make cache configurable and not necessarily a path. memcache, db etc.
@@ -158,3 +203,17 @@ function reevoomark_get_service($url, $sku) {
   return FALSE;
 }
 
+function theme_reevoomark_body($variables) {
+  return '<div class="reevoomark_' . $variables['delta'] . '">' . $variables['body'] . '</div>';
+}
+
+function theme_reevoomark_best_price($variables) {
+  $link = l($variables['currency_symbol'] . $variables['price'], $variables['url']);
+  return '<div class="reevoomark_best_price">Buy it now for: ' . $link . '</div>';
+}
+
+function theme_reevoomark_overall_score($variables) {
+  return '<div class="reevoomark_overall_score">
+    <span class="label">Overall Score</span> <span class="score">' . $variables['score']
+    . '</span></div>';
+}
