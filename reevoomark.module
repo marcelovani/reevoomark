@@ -199,6 +199,55 @@ function reevoomark_sku() {
 }
 
 /**
+ * Allow other modules to provide overriding classes.
+ *
+ */
+function reevoomark_load_classes() {
+  static $info;
+
+  if (!is_array($info)) {
+    // The service class
+    // The class must implement ReevooMarkServiceInterface
+    // Based on extending the ReevooMark class from the library
+    $info['service_class'] = variable_get(
+      'reevoomark_service_class',
+      array(
+        'file' => 'ReevooMarkService',
+        'module' => 'reevoomark',
+        'class' => 'ReevooMarkService',
+      )
+    );
+
+    // The document class
+    // Based on extending the ReevooMarkDocument class from the library
+    $info['document_class'] = variable_get(
+      'reevoomark_document_class',
+      array(
+        'file' => 'ReevooMarkServiceDocument',
+        'module' => 'reevoomark',
+        'class' => 'ReevooMarkServiceDocument',
+      )
+    );
+
+  }
+
+  // Load the libray classes
+  if (($library = libraries_load('reevoomark-php-api')) && !empty($library['loaded'])) {
+
+    // Load the extending class files if not already loaded
+    foreach ($info as $class_info) {
+      if (!class_exists($class_info['class']) && isset($class_info['file']) && isset($class_info['module'])) {
+        module_load_include('php', $class_info['module'], $class_info['file']);
+      }
+    }
+
+    return $info;
+  }
+
+  return FALSE;
+}
+
+/**
  * Get the ReevooMarkService object.
  *
  * @return ReevooMarkServiceInterface
@@ -209,26 +258,17 @@ function reevoomark_get_service($url, $sku) {
   $sku = trim($sku);
   $retailer = trim(variable_get('reevoomark_retailer'));
 
-  // Allow modules to provide their own service class
-  // The class must be implement ReevooMarkServiceInterface
-  $class_info = variable_get(
-    'reevoomark_service_class',
-    array(
-      'file' => 'ReevooMarkService',
-      'module' => 'reevoomark',
-      'class' => 'ReevooMarkService',
-    )
-  );
-  $class = $class_info['class'];
+  if ($info = reevoomark_load_classes()) {
+    $class = $info['service_class']['class'];
 
-  if (($library = libraries_load('reevoomark-php-api')) && !empty($library['loaded'])) {
-
-    // Load the class file if not already loaded
-    if (!class_exists($class_info['class']) && isset($class_info['file']) && isset($class_info['module'])) {
-      module_load_include('php', $class_info['module'], $class_info['file']);
+    if (isset($info['document_class']['class'])) {
+      // Use the module's document class
+      return new $class($url, $retailer, $sku, $info['document_class']['class']);
+    }
+    else {
+      return new $class($url, $retailer, $sku);
     }
 
-    return new $class($url, $retailer, $sku);
   }
 
   return FALSE;

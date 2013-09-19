@@ -15,8 +15,17 @@ class ReevooMarkService extends ReevooMark implements ReevooMarkServiceInterface
    */
   protected $cache;
 
-  public function __construct($url, $retailer, $sku)
+  /**
+   * The name of the class to use for documents.
+   *
+   * @var string
+   */
+  protected $document_class;
+
+  public function __construct($url, $retailer, $sku, $document_class = 'ReevooMarkDocument')
   {
+    $this->document_class = $document_class;
+
     // Pass FALSE as the $cache parm to the parent library as this uses Drupal caching.
     parent::__construct(FALSE, $url, $retailer, $sku);
   }
@@ -90,6 +99,8 @@ class ReevooMarkService extends ReevooMark implements ReevooMarkServiceInterface
    */
   protected function loadFromCache()
   {
+    $this->cacheGet();
+
     if (is_object($this->cache)) {
       if (REQUEST_TIME < $this->cache->expire) {
         return $this->cache->data;
@@ -111,6 +122,14 @@ class ReevooMarkService extends ReevooMark implements ReevooMarkServiceInterface
     }
 
     return FALSE;
+  }
+
+  /**
+   * Use our configured class for the document.
+   */
+  protected function newDocumentFromCache()
+  {
+    return new $this->document_class($this->loadFromCache(), $this->cacheMTime());
   }
 
 }
