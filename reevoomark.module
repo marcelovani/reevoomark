@@ -104,6 +104,22 @@ function reevoomark_block_info() {
 }
 
 /**
+ * Returns a renderable array of the content from the Reevoo service.
+ *
+ * Useful for when you dont want a block,
+ * just the content of that block for use in templates etc.
+ */
+function reevoomark_get_content($delta) {
+  $block = reevoomark_block_view($delta);
+
+  if (!empty($block['content'])) {
+    return $block['content'];
+  }
+
+  return FALSE;
+}
+
+/**
  * Implements of hook_block_view().
  */
 function reevoomark_block_view($delta = '') {

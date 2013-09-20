@@ -38,7 +38,7 @@ class ReevooMarkServiceDocument extends ReevooMarkDocument
   {
     $expired = parent::hasExpired();
 
-    if ($expired && ($this->currentAge() < $cache_age)) {
+    if ($expired && ($this->currentAge() < $this->cache_age)) {
       return FALSE;
     }
 
