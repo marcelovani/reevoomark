@@ -2,9 +2,12 @@
 
 /**
  * @file
- * Add functionality to the ReevooMark library.
+ * Add functionality to the ReevooMark class.
  */
 
+/**
+ * Add Drupal caching.
+ */
 class ReevooMarkService extends ReevooMark implements ReevooMarkServiceInterface
 {
 
@@ -23,7 +26,7 @@ class ReevooMarkService extends ReevooMark implements ReevooMarkServiceInterface
    *
    * @var int
    */
-  protected $cache_age = 86400;
+  protected $cacheAge = 86400;
 
   /**
    * Options passed in from the admin settings.
@@ -38,19 +41,31 @@ class ReevooMarkService extends ReevooMark implements ReevooMarkServiceInterface
    *
    * @var string
    */
-  protected $document_class = 'ReevooMarkDocument';
+  protected $documentClass = 'ReevooMarkDocument';
 
+  /**
+   * The extended onstructor.
+   *
+   * @param string $url
+   *   The endpoint of the Reevoo service.
+   * @param string $retailer
+   *   The retailer id.
+   * @param string $sku
+   *   The product stock keeping unit (sku).
+   * @param array $options
+   *   Custom options to set caching etc.
+   */
   public function __construct($url, $retailer, $sku, $options)
   {
 
     $this->options = $options;
 
     if (!empty($options['document_class'])) {
-      $this->document_class = $options['document_class'];
+      $this->documentClass = $options['document_class'];
     }
 
     if (!empty($options['cache_age'])) {
-      $this->cache_age = (int) $options['cache_age'];
+      $this->cacheAge = (int) $options['cache_age'];
     }
 
     // Pass FALSE as the $cache parm to the parent library as this uses Drupal caching.
@@ -61,6 +76,7 @@ class ReevooMarkService extends ReevooMark implements ReevooMarkServiceInterface
    * The overall score for the reviewed product.
    *
    * @return string
+   *   The overall score.
    */
   public function getOverallScore()
   {
@@ -69,24 +85,28 @@ class ReevooMarkService extends ReevooMark implements ReevooMarkServiceInterface
 
   /**
    * The best price.
+   *
    * If available once an "offers" service call has been made.
    *
    * @return string
+   *   The best price.
    */
   public function getBestPrice()
   {
-      return trim($this->data->header("X-Reevoo-BestPrice"));
+    return trim($this->data->header("X-Reevoo-BestPrice"));
   }
 
   /**
    * Returns the URL for the best price.
+   *
    * If available once an "offers" service call has been made.
    *
    * @return string
+   *   The url of where to buy at the best price.
    */
   public function getBestPriceLink()
   {
-      return $this->data->header("X-Reevoo-BestPriceLink");
+    return $this->data->header("X-Reevoo-BestPriceLink");
   }
 
   /**
@@ -97,6 +117,12 @@ class ReevooMarkService extends ReevooMark implements ReevooMarkServiceInterface
     return $this->body();
   }
 
+  /**
+   * The id used to identify the document in the cache.
+   *
+   * @return string
+   *   The cid.
+   */
   public function getCacheId()
   {
     return $this->remote_url;
@@ -106,10 +132,11 @@ class ReevooMarkService extends ReevooMark implements ReevooMarkServiceInterface
    * Use Drupal caching not the file based one of the parent library.
    *
    * @param string $data
+   *   The full http response from Reevoo.
    */
   protected function saveToCache($data)
   {
-    cache_set($this->getCacheId(), $data, 'cache_reevoomark', REQUEST_TIME + $this->cache_age);
+    cache_set($this->getCacheId(), $data, 'cache_reevoomark', REQUEST_TIME + $this->cacheAge);
   }
 
   /**
@@ -126,6 +153,7 @@ class ReevooMarkService extends ReevooMark implements ReevooMarkServiceInterface
    * Load from the Drupal cache.
    *
    * @return string
+   *   The cached version of the full http response from Reevoo.
    */
   protected function loadFromCache()
   {
@@ -142,13 +170,16 @@ class ReevooMarkService extends ReevooMark implements ReevooMarkServiceInterface
 
   /**
    * The time the document was saved to the cache, if at all.
+   *
+   * @return int
+   *   The time the cache for the document was created.
    */
   protected function cacheMTime()
   {
     $this->cacheGet();
 
     if (is_object($this->cache)) {
-      return $this->cache->created;
+      return (int) $this->cache->created;
     }
 
     return FALSE;
@@ -159,7 +190,7 @@ class ReevooMarkService extends ReevooMark implements ReevooMarkServiceInterface
    */
   protected function newDocumentFromCache()
   {
-    return new $this->document_class($this->loadFromCache(), $this->cacheMTime(), $this->options);
+    return new $this->documentClass($this->loadFromCache(), $this->cacheMTime(), $this->options);
   }
 
 }

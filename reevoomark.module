@@ -4,11 +4,10 @@
  * General functions and hook implementations.
  *
  * @see https://github.com/reevoo/reevoomark-php-api
- *
  */
 
 /**
- * Implements hook_libraries_info()
+ * Implements hook_libraries_info().
  */
 function reevoomark_libraries_info() {
   return array(
@@ -32,7 +31,7 @@ function reevoomark_libraries_info() {
 }
 
 /**
- * Implements of hook_menu().
+ * Implements hook_menu().
  */
 function reevoomark_menu() {
   $items['admin/config/system/reevoomark'] = array(
@@ -72,7 +71,7 @@ function reevoomark_theme() {
 }
 
 /**
- * Implements of hook_block_info().
+ * Implements hook_block_info().
  */
 function reevoomark_block_info() {
   $blocks['first_two_reviews'] = array(
@@ -116,14 +115,14 @@ function reevoomark_get_content($delta) {
 }
 
 /**
- * Implements of hook_block_view().
+ * Implements hook_block_view().
  */
 function reevoomark_block_view($delta = '') {
   $block = array();
 
   $sku = reevoomark_sku();
   if (empty($sku)) {
-    // No sku = no review
+    // No sku so no review.
     return $block;
   }
 
@@ -143,6 +142,7 @@ function reevoomark_block_view($delta = '') {
 
       }
       break;
+
     case 'best_price':
       if ($mark = reevoomark_get_service(variable_get('reevoomark_url_offers'), $sku)) {
 
@@ -160,6 +160,7 @@ function reevoomark_block_view($delta = '') {
 
       }
       break;
+
     case 'first_two_reviews':
     case 'embeddable_reviews':
     case 'offers':
@@ -198,6 +199,7 @@ function reevoomark_add_css(&$renderable_array, $delta) {
     case 'best_price':
       $renderable_array['#attached']['css'][] = 'http://mark.reevoo.com/stylesheets/best_offers/base.css';
       break;
+
     default:
       $renderable_array['#attached']['css'][] = 'http://mark.reevoo.com/stylesheets/reevoomark/embedded_reviews.css';
       break;
@@ -209,7 +211,7 @@ function reevoomark_add_css(&$renderable_array, $delta) {
  *
  * Defaults to nid of current page.
  *
- * @see hook_reevoomark_sku_alter($sku)
+ * @see hook_reevoomark_sku_alter()
  */
 function reevoomark_sku() {
   $sku = '';
@@ -225,15 +227,14 @@ function reevoomark_sku() {
 
 /**
  * Allow other modules to provide overriding classes.
- *
  */
 function reevoomark_load_classes() {
   static $info;
 
   if (!is_array($info)) {
-    // The service class
-    // The class must implement ReevooMarkServiceInterface
-    // Based on extending the ReevooMark class from the library
+    // The service class.
+    // The class must implement ReevooMarkServiceInterface.
+    // Based on extending the ReevooMark class from the library.
     $info['service_class'] = variable_get(
       'reevoomark_service_class',
       array(
@@ -243,8 +244,8 @@ function reevoomark_load_classes() {
       )
     );
 
-    // The document class
-    // Based on extending the ReevooMarkDocument class from the library
+    // The document class.
+    // Based on extending the ReevooMarkDocument class from the library.
     $info['document_class'] = variable_get(
       'reevoomark_document_class',
       array(
@@ -256,10 +257,10 @@ function reevoomark_load_classes() {
 
   }
 
-  // Load the libray classes
+  // Load the libray classes.
   if (($library = libraries_load('reevoomark-php-api')) && !empty($library['loaded'])) {
 
-    // Load the extending class files if not already loaded
+    // Load the extending class files if not already loaded.
     foreach ($info as $class_info) {
       if (!class_exists($class_info['class']) && isset($class_info['file']) && isset($class_info['module'])) {
         module_load_include('php', $class_info['module'], $class_info['file']);
@@ -276,6 +277,7 @@ function reevoomark_load_classes() {
  * Get the ReevooMarkService object.
  *
  * @return ReevooMarkServiceInterface
+ *   The service object.
  */
 function reevoomark_get_service($url, $sku) {
 
@@ -309,7 +311,7 @@ function reevoomark_get_service($url, $sku) {
 /**
  * Returns HTML from Reevoo wrapped in a div.
  *
- * @param $variables
+ * @param array $variables
  *   An associative array containing:
  *   - class: A class name that will be prefixed by 'reevoomark_'.
  *   - body: The html returned by Reevoo.
@@ -323,7 +325,7 @@ function theme_reevoomark_body($variables) {
 /**
  * Returns the best price wrapped in a div.
  *
- * @param $variables
+ * @param array $variables
  *   An associative array containing:
  *   - price: The best price.
  *   - url: The url of where to by the product at that price.
@@ -338,7 +340,7 @@ function theme_reevoomark_best_price($variables) {
 /**
  * Returns the overall score wrapped in a div.
  *
- * @param $variables
+ * @param array $variables
  *   An associative array containing:
  *   - score: The score.
  *

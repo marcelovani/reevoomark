@@ -10,10 +10,14 @@
  *
  * @ingroup forms
  * @see system_settings_form()
- * @param array $form
- * @param array $form_state
  *
- * @return array Output of the system_settings_form()
+ * @param array $form
+ *   A Drupal form.
+ * @param array $form_state
+ *   The current state of the form.
+ *
+ * @return array
+ *   Output of the system_settings_form()
  */
 function reevoomark_admin_settings($form, &$form_state) {
   $form['reevoomark_retailer'] = array(
@@ -23,7 +27,6 @@ function reevoomark_admin_settings($form, &$form_state) {
     '#default_value' => variable_get('reevoomark_retailer', ''),
     '#required' => TRUE,
   );
-
 
   $form['reevoomark_currency_symbol'] = array(
     '#type' => 'textfield',
@@ -64,7 +67,6 @@ function reevoomark_admin_settings($form, &$form_state) {
     '#description' => t('The endpoint for the ReevooMark offers widget service.'),
     '#default_value' => variable_get('reevoomark_url_offers', 'http://mark.reevoo.com/widgets/offers'),
   );
-
 
   return system_settings_form($form);
 }
