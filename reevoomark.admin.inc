@@ -58,12 +58,6 @@ function reevoomark_admin_settings($form, &$form_state) {
     '#description' => t('The endpoint for the ReevooMark embeddable reviews service.'),
     '#default_value' => variable_get('reevoomark_url_embeddable_reviews', 'http://mark.reevoo.com/reevoomark/embeddable_reviews'),
   );
-  $form['fieldset_url']['reevoomark_url_embeddable_reviews_slim'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Slim embeddable reviews'),
-    '#description' => t('The endpoint for the ReevooMark slim embeddable reviews service.'),
-    '#default_value' => variable_get('reevoomark_url_embeddable_reviews_slim', 'http://mark.reevoo.com/reevoomark/embeddable_reviews/slim.html'),
-  );
   $form['fieldset_url']['reevoomark_url_offers'] = array(
     '#type' => 'textfield',
     '#title' => t('Offers widget'),

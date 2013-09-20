@@ -83,10 +83,6 @@ function reevoomark_block_info() {
     'info' => t('ReevooMark embeddable reviews'),
     'cache' => DRUPAL_CACHE_PER_PAGE,
   );
-  $blocks['embeddable_reviews_slim'] = array(
-    'info' => t('ReevooMark slim embeddable reviews'),
-    'cache' => DRUPAL_CACHE_PER_PAGE,
-  );
   $blocks['offers'] = array(
     'info' => t('ReevooMark offers'),
     'cache' => DRUPAL_CACHE_PER_PAGE,
@@ -166,7 +162,6 @@ function reevoomark_block_view($delta = '') {
       break;
     case 'first_two_reviews':
     case 'embeddable_reviews':
-    case 'embeddable_reviews_slim':
     case 'offers':
       if ($mark = reevoomark_get_service(variable_get('reevoomark_url_' . $delta), $sku)) {
         $body = $mark->body();
