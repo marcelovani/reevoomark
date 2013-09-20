@@ -46,34 +46,4 @@ class ReevooMarkServiceDocument extends ReevooMarkDocument
     return $expired;
   }
 
-  /**
-   * While awaiting pull request, make the headers lowercase.
-   *
-   * @see https://github.com/reevoo/reevoomark-php-api/pull/3
-   */
-  function headers()
-  {
-    parent::headers();
-
-    if (is_array($this->headers)) {
-      $lc = array();
-      foreach ($this->headers as $key => $value) {
-        $lc[strtolower($key)] = $value;
-      }
-      $this->headers = $lc;
-    }
-
-    return $this->headers;
-  }
-
-  /**
-   * While awaiting pull request, get value of lowercased header.
-   *
-   * @see https://github.com/reevoo/reevoomark-php-api/pull/3
-   */
-  function header($name)
-  {
-    return parent::header(strtolower($name));
-  }
-
 }
