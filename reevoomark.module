@@ -261,12 +261,19 @@ function reevoomark_get_service($url, $sku) {
   if ($info = reevoomark_load_classes()) {
     $class = $info['service_class']['class'];
 
+    $options = array(
+      'cache_age' => variable_get('reevoomark_cache_age'),
+    );
+
     if (isset($info['document_class']['class'])) {
-      // Use the module's document class
-      return new $class($url, $retailer, $sku, $info['document_class']['class']);
+      // Use the module's document class, with extra options.
+      $options += array(
+        'document_class' => $info['document_class']['class'],
+      );
+      return new $class($url, $retailer, $sku, $options);
     }
     else {
-      return new $class($url, $retailer, $sku);
+      return new $class($url, $retailer, $sku, $options);
     }
 
   }

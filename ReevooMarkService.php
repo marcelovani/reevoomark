@@ -16,15 +16,42 @@ class ReevooMarkService extends ReevooMark implements ReevooMarkServiceInterface
   protected $cache;
 
   /**
+   * How old the cache is allowed to get.
+   * Cache expire = REQUEST_TIME + $cache_age
+   *
+   * Defaults to one day.
+   *
+   * @var int
+   */
+  protected $cache_age = 86400;
+
+  /**
+   * Options passed in from the admin settings.
+   * For setting these options goto: /admin/config/system/reevoomark
+   *
+   * @var array
+   */
+  protected $options;
+
+  /**
    * The name of the class to use for documents.
    *
    * @var string
    */
-  protected $document_class;
+  protected $document_class = 'ReevooMarkDocument';
 
-  public function __construct($url, $retailer, $sku, $document_class = 'ReevooMarkDocument')
+  public function __construct($url, $retailer, $sku, $options)
   {
-    $this->document_class = $document_class;
+
+    $this->options = $options;
+
+    if (!empty($options['document_class'])) {
+      $this->document_class = $options['document_class'];
+    }
+
+    if (!empty($options['cache_age'])) {
+      $this->cache_age = (int) $options['cache_age'];
+    }
 
     // Pass FALSE as the $cache parm to the parent library as this uses Drupal caching.
     parent::__construct(FALSE, $url, $retailer, $sku);
@@ -82,9 +109,12 @@ class ReevooMarkService extends ReevooMark implements ReevooMarkServiceInterface
    */
   protected function saveToCache($data)
   {
-    cache_set($this->getCacheId(), $data, 'cache_reevoomark', REQUEST_TIME + 86400);
+    cache_set($this->getCacheId(), $data, 'cache_reevoomark', REQUEST_TIME + $this->cache_age);
   }
 
+  /**
+   * Get the cached object if it exists.
+   */
   protected function cacheGet()
   {
     if (is_null($this->cache)) {
@@ -129,7 +159,7 @@ class ReevooMarkService extends ReevooMark implements ReevooMarkServiceInterface
    */
   protected function newDocumentFromCache()
   {
-    return new $this->document_class($this->loadFromCache(), $this->cacheMTime());
+    return new $this->document_class($this->loadFromCache(), $this->cacheMTime(), $this->options);
   }
 
 }
