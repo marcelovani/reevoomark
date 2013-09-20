@@ -136,11 +136,13 @@ function reevoomark_block_view($delta = '') {
       if ($mark = reevoomark_get_service(variable_get('reevoomark_url_first_two_reviews'), $sku)) {
 
         if ($score = $mark->getOverallScore()) {
-          $block['content'] = array(
+          $build = array(
             '#score' => $score,
             '#theme' => 'reevoomark_overall_score',
-            '#attached' => reevoomark_renderable_attached(),
           );
+          reevoomark_add_js($build);
+          reevoomark_add_css($build, $delta);
+          $block['content'] = $build;
         }
 
       }
@@ -149,13 +151,15 @@ function reevoomark_block_view($delta = '') {
       if ($mark = reevoomark_get_service(variable_get('reevoomark_url_offers'), $sku)) {
 
         if ($price = $mark->getBestPrice()) {
-          $block['content'] = array(
+          $build = array(
             '#currency_symbol' => variable_get('reevoomark_currency_symbol', '£'),
             '#price' => $price,
             '#url' => $mark->getBestPriceLink(),
             '#theme' => 'reevoomark_best_price',
-            '#attached' => reevoomark_renderable_attached(),
           );
+          reevoomark_add_js($build);
+          reevoomark_add_css($build, $delta);
+          $block['content'] = $build;
         }
 
       }
@@ -167,12 +171,14 @@ function reevoomark_block_view($delta = '') {
       if ($mark = reevoomark_get_service(variable_get('reevoomark_url_' . $delta), $sku)) {
         $body = $mark->body();
         if (!empty($body)) {
-          $block['content'] = array(
+          $build = array(
             '#body' => $body,
             '#class' => $delta,
             '#theme' => 'reevoomark_body',
-            '#attached' => reevoomark_renderable_attached(),
           );
+          reevoomark_add_js($build);
+          reevoomark_add_css($build, $delta);
+          $block['content'] = $build;
         }
       }
       break;
@@ -182,17 +188,25 @@ function reevoomark_block_view($delta = '') {
 }
 
 /**
- * The '#attached' part of the renderable array for including the required common js & css.
+ * Add the js to the renderable array.
  */
-function reevoomark_renderable_attached() {
-  return array(
-    'css' => array(
-      'http://mark.reevoo.com/stylesheets/reevoomark/embedded_reviews.css',
-    ),
-    'js' => array(
-      'http://mark.reevoo.com/reevoomark/' . variable_get('reevoomark_retailer') . '.js',
-    ),
-  );
+function reevoomark_add_js(&$renderable_array) {
+  $renderable_array['#attached']['js'][] = 'http://mark.reevoo.com/reevoomark/' . variable_get('reevoomark_retailer') . '.js';
+}
+
+/**
+ * Add the js to the renderable array.
+ */
+function reevoomark_add_css(&$renderable_array, $delta) {
+  switch ($delta) {
+    case 'offers':
+    case 'best_price':
+      $renderable_array['#attached']['css'][] = 'http://mark.reevoo.com/stylesheets/best_offers/base.css';
+      break;
+    default:
+      $renderable_array['#attached']['css'][] = 'http://mark.reevoo.com/stylesheets/reevoomark/embedded_reviews.css';
+      break;
+  }
 }
 
 /**
