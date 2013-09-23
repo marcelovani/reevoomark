@@ -1,0 +1,45 @@
+<?php
+/**
+ * @file
+ * Test cases for testing the reevoomark module.
+ */
+
+class ReevoomarkPermissionsTestCase extends DrupalWebTestCase {
+
+  public function setUp() {
+    // The reevoomark module cannot be enabled
+    // because the 'libraries' dependency cannot be enabled...
+    parent::setUp(array('reevoomark'));
+  }
+
+  public function getInfo() {
+    return array(
+      'name' => 'ReevooMark: Permission tests',
+      'description' => 'Permission tests for ReevooMark.',
+      'group' => 'ReevooMark',
+    );
+  }
+
+  public function testUserWithoutPermissions() {
+    $this->drupalLogin($this->createContentAdmin());
+    $this->drupalGet('admin/config/system/reevoomark');
+    $this->assertRaw(t('Access denied'),
+                     'A user without administer site permission should not be able to access ReevooMark system settings.');
+  }
+
+  public function testUserWithPermissions() {
+    $this->drupalLogin($this->createReevoomarkAdmin());
+    $this->drupalGet('admin/config/system/reevoomark');
+    $this->assertRaw(t('ReevooMark'),
+                     'A user with reevoomark permission should be able to access ReevooMark system settings.');
+  }
+
+  private function createContentAdmin() {
+    return $this->drupalCreateUser(array('administer content types'));
+  }
+
+  private function createReevoomarkAdmin() {
+    return $this->drupalCreateUser(array('administer reevoomark'));
+  }
+
+}
