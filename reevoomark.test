@@ -31,7 +31,7 @@ class ReevoomarkPermissionsTestCase extends DrupalWebTestCase {
     $this->drupalLogin($this->createReevoomarkAdmin());
     $this->drupalGet('admin/config/system/reevoomark');
     $this->assertRaw(t('ReevooMark'),
-                     'A user with reevoomark permission should be able to access ReevooMark system settings.');
+                     'A user with administer reevoomark settings permission should be able to access ReevooMark system settings.');
   }
 
   private function createContentAdmin() {
@@ -39,7 +39,7 @@ class ReevoomarkPermissionsTestCase extends DrupalWebTestCase {
   }
 
   private function createReevoomarkAdmin() {
-    return $this->drupalCreateUser(array('administer reevoomark'));
+    return $this->drupalCreateUser(array('administer reevoomark settings'));
   }
 
 }

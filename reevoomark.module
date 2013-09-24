@@ -47,6 +47,18 @@ function reevoomark_menu() {
 }
 
 /**
+ * Implements hook_permission().
+ */
+function reevoomark_permission() {
+  return array(
+    'administer reevoomark settings' => array(
+      'title' => t('Administer ReevooMark settings'),
+      'description' => t('Administer ReevooMark settings.'),
+    ),
+  );
+}
+
+/**
  * Implements hook_theme().
  */
 function reevoomark_theme() {
