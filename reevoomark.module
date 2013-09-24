@@ -111,6 +111,43 @@ function reevoomark_block_info() {
 }
 
 /**
+ * Get the value for the given variable_name.
+ *
+ * Provides consistent defaults.
+ *
+ * @param string $variable_name
+ *   The variable name for the service url.
+ */
+function reevoomark_variable($variable_name) {
+  switch ($variable_name) {
+    case 'reevoomark_retailer':
+      return variable_get('reevoomark_retailer', '');
+
+    case 'reevoomark_cache_age':
+      return variable_get('reevoomark_cache_age', 3600);
+
+    case 'reevoomark_currency_symbol':
+      return variable_get('reevoomark_currency_symbol', '£');
+
+    case 'reevoomark_url_first_two_reviews':
+      return variable_get('reevoomark_url_first_two_reviews', 'http://mark.reevoo.com/reevoomark/first_two_reviews.html');
+
+    case 'reevoomark_url_embeddable_reviews':
+      return variable_get('reevoomark_url_embeddable_reviews', 'http://mark.reevoo.com/reevoomark/embeddable_reviews');
+
+    case 'reevoomark_url_offers':
+      return variable_get('reevoomark_url_offers', 'http://mark.reevoo.com/widgets/offers');
+
+    case 'reevoomark_css_best_offers':
+      return variable_get('reevoomark_css_best_offers', 'http://mark.reevoo.com/stylesheets/best_offers/base.css');
+
+    case 'reevoomark_css_embedded_reviews':
+      return variable_get('reevoomark_css_embedded_reviews', 'http://mark.reevoo.com/stylesheets/reevoomark/embedded_reviews.css');
+
+  }
+}
+
+/**
  * Returns a renderable array of the content from the Reevoo service.
  *
  * Useful for when you dont want a block,
@@ -140,7 +177,7 @@ function reevoomark_block_view($delta = '') {
 
   switch ($delta) {
     case 'overall_score':
-      if ($mark = reevoomark_get_service(variable_get('reevoomark_url_first_two_reviews'), $sku)) {
+      if ($mark = reevoomark_get_service(reevoomark_variable('reevoomark_url_first_two_reviews'), $sku)) {
 
         if ($score = $mark->getOverallScore()) {
           $build = array(
@@ -156,7 +193,7 @@ function reevoomark_block_view($delta = '') {
       break;
 
     case 'best_price':
-      if ($mark = reevoomark_get_service(variable_get('reevoomark_url_offers'), $sku)) {
+      if ($mark = reevoomark_get_service(reevoomark_variable('reevoomark_url_offers'), $sku)) {
 
         if ($price = $mark->getBestPrice()) {
           $build = array(
@@ -176,7 +213,7 @@ function reevoomark_block_view($delta = '') {
     case 'first_two_reviews':
     case 'embeddable_reviews':
     case 'offers':
-      if ($mark = reevoomark_get_service(variable_get('reevoomark_url_' . $delta), $sku)) {
+      if ($mark = reevoomark_get_service(reevoomark_variable('reevoomark_url_' . $delta), $sku)) {
         $body = $mark->body();
         if (!empty($body)) {
           $build = array(
@@ -199,7 +236,7 @@ function reevoomark_block_view($delta = '') {
  * Add the js to the renderable array.
  */
 function reevoomark_add_js(&$renderable_array) {
-  $renderable_array['#attached']['js'][] = 'http://mark.reevoo.com/reevoomark/' . variable_get('reevoomark_retailer') . '.js';
+  $renderable_array['#attached']['js'][] = 'http://mark.reevoo.com/reevoomark/' . reevoomark_variable('reevoomark_retailer') . '.js';
 }
 
 /**
@@ -209,11 +246,11 @@ function reevoomark_add_css(&$renderable_array, $delta) {
   switch ($delta) {
     case 'offers':
     case 'best_price':
-      $renderable_array['#attached']['css'][] = 'http://mark.reevoo.com/stylesheets/best_offers/base.css';
+      $renderable_array['#attached']['css'][] = reevoomark_variable('reevoomark_css_best_offers');
       break;
 
     default:
-      $renderable_array['#attached']['css'][] = 'http://mark.reevoo.com/stylesheets/reevoomark/embedded_reviews.css';
+      $renderable_array['#attached']['css'][] = reevoomark_variable('reevoomark_css_embedded_reviews');
       break;
   }
 }
@@ -295,13 +332,13 @@ function reevoomark_get_service($url, $sku) {
 
   $url = trim($url);
   $sku = trim($sku);
-  $retailer = trim(variable_get('reevoomark_retailer'));
+  $retailer = trim(reevoomark_variable('reevoomark_retailer'));
 
   if ($info = reevoomark_load_classes()) {
     $class = $info['service_class']['class'];
 
     $options = array(
-      'cache_age' => variable_get('reevoomark_cache_age'),
+      'cache_age' => reevoomark_variable('reevoomark_cache_age'),
     );
 
     if (isset($info['document_class']['class'])) {
