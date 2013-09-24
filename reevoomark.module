@@ -329,6 +329,10 @@ function reevoomark_load_classes() {
  *   The service object.
  */
 function reevoomark_get_service($url, $sku) {
+  //in CURL < 7.16.2 this constant is not defined
+  if( !defined('CURLOPT_TIMEOUT_MS')){
+    define('CURLOPT_TIMEOUT_MS', 155);
+  }
 
   $url = trim($url);
   $sku = trim($sku);
