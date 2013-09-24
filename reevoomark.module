@@ -350,12 +350,8 @@ function reevoomark_get_service($url, $sku) {
       $options += array(
         'document_class' => $info['document_class']['class'],
       );
-      return new $class($url, $retailer, $sku, $options);
     }
-    else {
-      return new $class($url, $retailer, $sku, $options);
-    }
-
+   return new $class($url, $retailer, $sku, $options);
   }
 
   return FALSE;
