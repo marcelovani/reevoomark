@@ -47,5 +47,3 @@ so use your preferred method for placing on of the following blocks:
  - ReevooMark offers
  - ReevooMark overall score
  - ReevooMark best price
-
-
