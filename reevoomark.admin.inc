@@ -86,7 +86,5 @@ function reevoomark_admin_settings($form, &$form_state) {
     '#default_value' => reevoomark_variable('reevoomark_url_offers'),
   );
 
-
-
   return system_settings_form($form);
 }
