@@ -66,7 +66,8 @@ class ReevooMarkService extends ReevooMark implements ReevooMarkServiceInterface
       $this->cacheAge = (int) $options['cache_age'];
     }
 
-    // Pass FALSE as the $cache parm to the parent library as this uses Drupal caching.
+    // Pass FALSE as the $cache parm to the parent library
+    // as this uses Drupal's caching.
     parent::__construct(FALSE, $url, $retailer, $sku);
   }
 
