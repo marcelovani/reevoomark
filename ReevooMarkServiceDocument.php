@@ -8,8 +8,7 @@
 /**
  * Extension of ReevooMarkDocument to provided alternative caching.
  */
-class ReevooMarkServiceDocument extends ReevooMarkDocument
-{
+class ReevooMarkServiceDocument extends ReevooMarkDocument {
 
   /**
    * How old the cache is allowed to get.
@@ -33,8 +32,7 @@ class ReevooMarkServiceDocument extends ReevooMarkDocument
    * @param array $options
    *   Custom options to set caching etc.
    */
-  public function __construct($data, $mtime, $options = NULL)
-  {
+  public function __construct($data, $mtime, $options = NULL) {
     $this->options = $options;
 
     if (!empty($options['cache_age'])) {
@@ -47,8 +45,7 @@ class ReevooMarkServiceDocument extends ReevooMarkDocument
   /**
    * Allow the document's cache expiration date to be extended.
    */
-  public function hasExpired()
-  {
+  public function hasExpired() {
     $expired = parent::hasExpired();
 
     if ($expired && ($this->currentAge() < $this->cacheAge)) {

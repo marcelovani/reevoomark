@@ -8,8 +8,7 @@
 /**
  * The interface for the ReevooMark Service.
  */
-interface ReevooMarkServiceInterface
-{
+interface ReevooMarkServiceInterface {
 
   /**
    * The overall score for the reviewed product.
