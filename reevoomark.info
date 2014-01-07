@@ -8,3 +8,4 @@ dependencies[] = libraries (2.x)
 
 files[] = ReevooMarkServiceInterface.php
 files[] = ReevooMarkService.php
+files[] = ReevooMarkServiceDocument.php
