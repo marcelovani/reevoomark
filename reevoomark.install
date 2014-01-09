@@ -51,6 +51,8 @@ function reevoomark_uninstall() {
   variable_del('reevoomark_url_embeddable_reviews');
   variable_del('reevoomark_url_embeddable_reviews_slim');
   variable_del('reevoomark_url_offers');
+  variable_del('reevoomark_css_best_offers');
+  variable_del('reevoomark_css_embedded_reviews');
 }
 
 /**
