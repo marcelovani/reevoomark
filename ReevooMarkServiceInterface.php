@@ -46,4 +46,10 @@ interface ReevooMarkServiceInterface {
    */
   public function getBody();
 
+  /**
+   * The total number of scores
+   * @return string
+   *   Total number of scores
+   */
+  public function getScoreCount();
 }

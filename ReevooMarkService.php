@@ -113,6 +113,13 @@ class ReevooMarkService extends ReevooMark implements ReevooMarkServiceInterface
   }
 
   /**
+   * The total number of scores
+   */
+  public function getScoreCount() {
+    return $this->data->header('X-Reevoo-ScoreCount');
+  }
+
+  /**
    * The id used to identify the document in the cache.
    *
    * @return string

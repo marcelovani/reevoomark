@@ -79,6 +79,12 @@ function reevoomark_theme() {
         'url' => NULL,
       ),
     ),
+    'reevoomark_read_reviews_button' => array(
+        'variables' => array(
+          'score' => NULL,
+          'scores_count' => NULL
+         ),
+     ),
   );
 }
 
@@ -106,7 +112,10 @@ function reevoomark_block_info() {
     'info' => t('ReevooMark best price'),
     'cache' => DRUPAL_CACHE_PER_PAGE,
   );
-
+  $blocks['read_reviews_button'] = array(
+    'info' => t('ReevooMark read reviews button'),
+    'cache' => DRUPAL_CACHE_PER_PAGE,
+  );
   return $blocks;
 }
 
@@ -220,6 +229,22 @@ function reevoomark_block_view($delta = '') {
             '#body' => $body,
             '#class' => $delta,
             '#theme' => 'reevoomark_body',
+          );
+          reevoomark_add_js($build);
+          reevoomark_add_css($build, $delta);
+          $block['content'] = $build;
+        }
+      }
+      break;
+      case 'read_reviews_button':
+      if ($mark = reevoomark_get_service(reevoomark_variable('reevoomark_url_first_two_reviews'), $sku)) {
+
+        if ($score = $mark->getOverallScore()) {
+          $scores_count = $mark->getScoreCount();
+          $build = array(
+            '#score' => $score,
+            '#scores_count' => $scores_count,
+            '#theme' => 'reevoomark_read_reviews_button',
           );
           reevoomark_add_js($build);
           reevoomark_add_css($build, $delta);
@@ -400,4 +425,15 @@ function theme_reevoomark_overall_score($variables) {
   return '<div class="reevoomark_overall_score">
     <span class="label">Overall Score</span> <span class="score">' . $variables['score']
     . '</span></div>';
+}
+
+/**
+ * Returns the overall score and the number of reviews
+ * @param array $variables
+ *   An associative array containing:
+ *     - score: The score
+ *     - scores_count : Total number of scores
+ */
+function theme_reevoomark_read_reviews_button($variables) {
+  return $variables['score'].' out of 10. '.l('Read '.$variables['scores_count'].' reviews', current_path(), array('fragment' => 'reevoomark_reviews'));
 }
