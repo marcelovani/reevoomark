@@ -241,14 +241,18 @@ function reevoomark_block_view($delta = '') {
 
         if ($score = $mark->getOverallScore()) {
           $scores_count = $mark->getScoreCount();
-          $build = array(
-            '#score' => $score,
-            '#scores_count' => $scores_count,
-            '#theme' => 'reevoomark_read_reviews_button',
-          );
-          reevoomark_add_js($build);
-          reevoomark_add_css($build, $delta);
-          $block['content'] = $build;
+
+          if($scores_count) {
+            $build = array(
+              '#score' => $score,
+              '#scores_count' => $scores_count,
+              '#theme' => 'reevoomark_read_reviews_button',
+            );
+            reevoomark_add_js($build);
+            reevoomark_add_css($build, $delta);
+            $block['content'] = $build;
+          }
+
         }
       }
       break;
