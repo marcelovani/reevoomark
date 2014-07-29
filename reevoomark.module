@@ -116,6 +116,10 @@ function reevoomark_block_info() {
     'info' => t('ReevooMark read reviews button'),
     'cache' => DRUPAL_CACHE_PER_PAGE,
   );
+  $blocks['read_reviews_button_popup'] = array(
+    'info' => t('ReevooMark read reviews button. Opens in a javascript popup.'),
+    'cache' => DRUPAL_CACHE_PER_PAGE,
+  );
   return $blocks;
 }
 
@@ -236,7 +240,7 @@ function reevoomark_block_view($delta = '') {
         }
       }
       break;
-      case 'read_reviews_button':
+    case 'read_reviews_button':
       if ($mark = reevoomark_get_service(reevoomark_variable('reevoomark_url_first_two_reviews'), $sku)) {
 
         if ($score = $mark->getOverallScore()) {
@@ -256,16 +260,38 @@ function reevoomark_block_view($delta = '') {
         }
       }
       break;
+    case 'read_reviews_button_popup':
+      if ($trkref = reevoomark_variable('reevoomark_retailer')) {
+        $build = array('#markup' => l(t('Reevoo reviews'), "http://mark.reevoo.com/partner/$trkref/$sku", array('attributes' => array('class' => array('reevoomark')))));
+        reevoomark_add_js($build, $trkref);
+        $block['content'] = $build;
+      }
+      break;
   }
 
   return $block;
 }
 
 /**
- * Add the js to the renderable array.
+ * Add asyncronous js to the renderable array.
  */
 function reevoomark_add_js(&$renderable_array) {
-  $renderable_array['#attached']['js'][] = 'http://mark.reevoo.com/reevoomark/' . reevoomark_variable('reevoomark_retailer') . '.js';
+  // Only add once per page
+  static $reevoo_js;
+  if (empty($reevoo_js)) {
+    if ($trkref = reevoomark_variable('reevoomark_retailer')) {
+      $reevoo_js = "
+        (function() {
+          var myscript = document.createElement('script');
+          myscript.type = 'text/javascript';
+          myscript.src=('http://mark.reevoo.com/reevoomark/$trkref.js?async=true');
+          var headTag = document.getElementsByTagName('head')[0];
+          headTag.appendChild(myscript);
+        })();
+      ";
+      $renderable_array['#attached']['js'] = array($reevoo_js => array('type' => 'inline'));
+    }
+  }
 }
 
 /**
