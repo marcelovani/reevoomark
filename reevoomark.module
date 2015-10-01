@@ -469,5 +469,5 @@ function theme_reevoomark_overall_score($variables) {
  *     - scores_count : Total number of scores
  */
 function theme_reevoomark_read_reviews_button($variables) {
-  return $variables['score'] . ' out of 10. ' . l('Read ' . $variables['scores_count'] . ' reviews', current_path(), array('fragment' => 'reevoomark_reviews'));
+  return $variables['score'] . ' ' . t('out of 10') . ' ' . l(t('Read') . ' ' . $variables['scores_count'] . ' ' . t('reviews'), current_path(), array('fragment' => 'reevoomark_reviews'));
 }
