@@ -80,10 +80,10 @@ function reevoomark_theme() {
       ),
     ),
     'reevoomark_read_reviews_button' => array(
-        'variables' => array(
-          'score' => NULL,
-          'scores_count' => NULL
-         ),
+      'variables' => array(
+        'score' => NULL,
+        'scores_count' => NULL
+       ),
      ),
   );
 }
@@ -240,13 +240,14 @@ function reevoomark_block_view($delta = '') {
         }
       }
       break;
+
     case 'read_reviews_button':
       if ($mark = reevoomark_get_service(reevoomark_variable('reevoomark_url_first_two_reviews'), $sku)) {
 
         if ($score = $mark->getOverallScore()) {
           $scores_count = $mark->getScoreCount();
 
-          if($scores_count) {
+          if ($scores_count) {
             $build = array(
               '#score' => $score,
               '#scores_count' => $scores_count,
@@ -260,6 +261,7 @@ function reevoomark_block_view($delta = '') {
         }
       }
       break;
+
     case 'read_reviews_button_popup':
       if ($trkref = reevoomark_variable('reevoomark_retailer')) {
         $build = array('#markup' => l(t('Reevoo reviews'), "http://mark.reevoo.com/partner/$trkref/$sku", array('attributes' => array('class' => array('reevoomark')))));
@@ -267,6 +269,7 @@ function reevoomark_block_view($delta = '') {
         $block['content'] = $build;
       }
       break;
+
   }
 
   return $block;
@@ -276,7 +279,7 @@ function reevoomark_block_view($delta = '') {
  * Add asyncronous js to the renderable array.
  */
 function reevoomark_add_js(&$renderable_array) {
-  // Only add once per page
+  // Only add once per page.
   static $reevoo_js;
   if (empty($reevoo_js)) {
     if ($trkref = reevoomark_variable('reevoomark_retailer')) {
@@ -458,12 +461,13 @@ function theme_reevoomark_overall_score($variables) {
 }
 
 /**
- * Returns the overall score and the number of reviews
+ * Returns the overall score and the number of reviews.
+ *
  * @param array $variables
  *   An associative array containing:
  *     - score: The score
  *     - scores_count : Total number of scores
  */
 function theme_reevoomark_read_reviews_button($variables) {
-  return $variables['score'].' out of 10. '.l('Read '.$variables['scores_count'].' reviews', current_path(), array('fragment' => 'reevoomark_reviews'));
+  return $variables['score'] . ' out of 10. ' . l('Read ' . $variables['scores_count'] . ' reviews', current_path(), array('fragment' => 'reevoomark_reviews'));
 }

@@ -23,7 +23,8 @@ function reevoomark_requirements($phase) {
           array(
             '!reevoomark' => l($t('reevoomark-php-api'),
             $library['download url']),
-            '%path' => 'sites/all/libraries')
+            '%path' => 'sites/all/libraries'
+          )
         ),
       );
     }
